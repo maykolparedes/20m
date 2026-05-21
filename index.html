@@ -1,0 +1,532 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lora:ital,wght@0,400;0,500;1,400&family=Dancing+Script:wght@500;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  min-height:100vh;
+  background:#1a0f05;
+  font-family:'Lora',Georgia,serif;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(120,70,10,0.35) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 85%, rgba(80,35,5,0.4) 0%,transparent 55%);
+  pointer-events:none;z-index:0;
+}
+
+/* partículas */
+.pt{position:fixed;pointer-events:none;z-index:1;color:rgba(200,155,70,.35);font-size:13px;
+  animation:floatup var(--d) ease-in-out var(--dl) infinite;}
+@keyframes floatup{0%{opacity:0;transform:translateY(0) rotate(0)}30%{opacity:.7}70%{opacity:.4}100%{opacity:0;transform:translateY(-100px) rotate(var(--r))}}
+
+.wrap{position:relative;z-index:10;max-width:640px;margin:0 auto;padding:30px 16px 80px;}
+
+/* DOTS */
+.dots{display:flex;justify-content:center;gap:10px;margin-bottom:26px;}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(200,155,70,.18);border:1px solid rgba(200,155,70,.3);cursor:pointer;transition:all .3s;}
+.dot.on{background:#c89b46;transform:scale(1.3);border-color:#c89b46;}
+
+/* SCREENS */
+.scr{display:none;animation:faderise .75s cubic-bezier(.22,1,.36,1) both;}
+.scr.active{display:block;}
+@keyframes faderise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAPEL */
+.papel{
+  background:linear-gradient(158deg,#fef9ec 0%,#f6e9c0 45%,#ede0a8 100%);
+  border-radius:3px 18px 18px 3px;
+  padding:44px 40px 40px;
+  position:relative;overflow:hidden;
+  box-shadow:-7px 0 0 #7a4e0f, 0 10px 50px rgba(0,0,0,.65), inset 0 0 80px rgba(140,80,0,.08);
+  margin-bottom:18px;
+}
+.papel::before{content:'';position:absolute;left:58px;top:0;bottom:0;width:1px;background:rgba(190,120,60,.22);}
+.papel::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,rgba(170,110,50,.11) 32px);
+}
+
+/* manchas de tinta decorativas */
+.ink-spot{position:absolute;border-radius:50%;background:rgba(60,30,10,.06);pointer-events:none;}
+
+.papel-title{
+  font-family:'Playfair Display',serif;
+  font-size:38px;color:#2c1200;font-style:italic;
+  line-height:1.2;position:relative;z-index:2;
+}
+.papel-date{font-size:12px;letter-spacing:3px;color:#8b5a20;font-style:italic;position:relative;z-index:2;margin-bottom:28px;margin-top:2px;}
+.papel-saludo{font-family:'Dancing Script',cursive;font-size:26px;color:#4a1e00;position:relative;z-index:2;margin-bottom:14px;}
+.papel-body{font-size:15.5px;color:#2c1200;line-height:2.05;position:relative;z-index:2;}
+.papel-firma{font-family:'Dancing Script',cursive;font-size:26px;color:#4a1e00;text-align:right;margin-top:28px;position:relative;z-index:2;}
+.divline{text-align:center;color:#c89b46;letter-spacing:10px;font-size:13px;margin:18px 0;opacity:.55;position:relative;z-index:2;}
+.sello-cera{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:52px;height:52px;
+  background:radial-gradient(circle at 38% 32%,#e04040,#8a0000);
+  border-radius:50%;font-size:22px;
+  box-shadow:0 4px 18px rgba(160,0,0,.5),inset 0 2px 4px rgba(255,255,255,.18);
+  border:3px solid #6a0000;position:relative;z-index:2;
+}
+
+/* SOBRE ANIMADO */
+.env-wrap{text-align:center;margin-bottom:12px;}
+.env{
+  display:inline-block;position:relative;
+  width:200px;height:130px;cursor:pointer;
+  transition:transform .4s ease;
+}
+.env:hover{transform:translateY(-6px) scale(1.03);}
+.env-body{
+  width:100%;height:100%;
+  background:linear-gradient(155deg,#f2d478,#d4a020);
+  border-radius:6px;position:relative;overflow:hidden;
+  box-shadow:0 10px 40px rgba(0,0,0,.55);
+}
+.env-flap{
+  position:absolute;top:0;left:0;right:0;height:68px;
+  background:linear-gradient(155deg,#e8c850,#c89020);
+  clip-path:polygon(0 0,100% 0,50% 58%);
+  transform-origin:top center;
+  transition:transform .55s ease;
+  z-index:4;
+}
+.env.abierto .env-flap{transform:rotateX(-175deg);}
+.env-l{position:absolute;left:0;top:0;bottom:0;width:58px;background:linear-gradient(to right,#c88010,#e0b030);clip-path:polygon(0 0,52% 50%,0 100%);}
+.env-r{position:absolute;right:0;top:0;bottom:0;width:58px;background:linear-gradient(to left,#c88010,#e0b030);clip-path:polygon(100% 0,48% 50%,100% 100%);}
+.env-bot{position:absolute;bottom:0;left:0;right:0;height:58px;background:linear-gradient(155deg,#c88010,#b07000);clip-path:polygon(0 100%,100% 100%,54% 44%,46% 44%);}
+.env-seal{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:38px;height:38px;
+  background:radial-gradient(circle,#cc2222,#880000);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:17px;z-index:5;
+  box-shadow:0 3px 10px rgba(140,0,0,.5);border:2px solid #660000;
+}
+.env-carta{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:155px;height:0;overflow:hidden;
+  background:linear-gradient(160deg,#fef9ec,#f0e0b0);
+  border-radius:3px;
+  transition:height .5s ease .1s, top .5s ease .1s;
+  z-index:3;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Dancing Script',cursive;font-size:16px;color:#5c2a00;
+  box-shadow:0 -4px 16px rgba(0,0,0,.3);
+}
+.env.abierto .env-carta{height:90px;top:-55px;}
+.env-hint{font-size:13px;color:#c89b46;font-style:italic;letter-spacing:1px;margin-top:10px;animation:parpadeo 2s ease-in-out infinite;}
+@keyframes parpadeo{0%,100%{opacity:.45}50%{opacity:1}}
+
+/* TYPING */
+.typing{font-family:'Dancing Script',cursive;font-size:22px;color:#c89b46;text-align:center;min-height:52px;padding:0 20px;line-height:1.5;margin:14px 0;}
+.cur{display:inline-block;width:2px;height:20px;background:#c89b46;margin-left:2px;animation:blink .85s step-end infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* BOTONES */
+.btn{
+  display:inline-block;
+  background:linear-gradient(135deg,#7a3d00,#c08010);
+  border:none;color:#fef9ec;
+  padding:13px 40px;border-radius:50px;
+  cursor:pointer;font-size:15px;
+  font-family:'Lora',serif;font-style:italic;
+  letter-spacing:.5px;transition:all .3s;
+  box-shadow:0 4px 22px rgba(120,60,0,.5);
+  margin-top:14px;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(120,60,0,.65);}
+.btn-s{
+  background:rgba(200,155,70,.1);border:1px solid rgba(200,155,70,.38);
+  color:#c89b46;padding:11px 24px;border-radius:50px;
+  cursor:pointer;font-size:14px;font-family:'Lora',serif;font-style:italic;
+  transition:all .3s;margin:5px;
+}
+.btn-s:hover{background:rgba(200,155,70,.25);transform:translateY(-2px);}
+
+/* CARTAS OCULTAS (screen 2) */
+.cartas-grid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:18px 0;}
+.mini-sobre{
+  width:100px;height:70px;position:relative;cursor:pointer;
+  transition:transform .3s;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));
+}
+.mini-sobre:hover{transform:translateY(-6px) rotate(-2deg);}
+.mini-sobre svg{width:100%;height:100%;}
+.mini-sobre .msg-reveal{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  background:linear-gradient(155deg,#fef9ec,#f0e0a8);
+  border-radius:5px;opacity:0;
+  transition:opacity .4s ease;
+  padding:6px;text-align:center;
+  pointer-events:none;
+}
+.mini-sobre.open .msg-reveal{opacity:1;}
+.mini-sobre.open svg{opacity:0;}
+.msg-reveal .micon{font-size:22px;margin-bottom:3px;}
+.msg-reveal .mtxt{font-size:10px;color:#4a1e00;font-style:italic;line-height:1.3;}
+
+/* SELLO ELEGIR (screen 3) */
+.sellos{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:20px 0;}
+.sello{
+  padding:10px 20px;
+  border:2px solid var(--sc);color:var(--sc);
+  border-radius:4px;cursor:pointer;
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  font-family:'Lora',serif;
+  transition:all .25s;
+  position:relative;overflow:hidden;
+}
+.sello::before{content:'';position:absolute;inset:0;background:var(--sc);opacity:0;transition:opacity .25s;}
+.sello:hover::before{opacity:.12;}
+.sello:hover{transform:rotate(-2deg) scale(1.06);}
+.sello-chosen{
+  background:rgba(200,155,70,.08);
+  border:1px solid rgba(200,155,70,.25);
+  border-radius:14px;padding:22px;
+  text-align:center;margin-top:16px;
+  animation:faderise .5s ease both;
+  display:none;
+}
+.sello-chosen.show{display:block;}
+.sello-icon{font-size:44px;display:block;margin-bottom:10px;}
+.sello-name{font-family:'Playfair Display',serif;font-size:20px;color:#c89b46;font-style:italic;margin-bottom:6px;}
+.sello-msg{font-size:14px;color:#d4b878;line-height:1.9;}
+
+/* GALERÍA cartas S4 */
+.galeria{display:flex;flex-direction:column;gap:16px;}
+.carta-mini{
+  background:linear-gradient(158deg,#fef9ec,#f0e0b0);
+  border-radius:3px 14px 14px 3px;
+  padding:22px 26px 22px 34px;
+  position:relative;
+  box-shadow:-5px 0 0 #7a4e0f, 0 6px 28px rgba(0,0,0,.5);
+  cursor:pointer;transition:transform .3s;
+  overflow:hidden;
+}
+.carta-mini::before{content:'';position:absolute;left:44px;top:0;bottom:0;width:1px;background:rgba(190,120,60,.2);}
+.carta-mini::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,transparent 0,transparent 25px,rgba(170,110,50,.09) 26px);
+}
+.carta-mini:hover{transform:translateX(6px);}
+.carta-mini .ctitle{font-family:'Dancing Script',cursive;font-size:20px;color:#4a1e00;position:relative;z-index:2;margin-bottom:4px;}
+.carta-mini .ctext{font-size:14px;color:#3c1c00;line-height:1.9;position:relative;z-index:2;}
+.carta-mini .ctag{font-size:11px;color:#9b6a20;font-style:italic;margin-top:8px;position:relative;z-index:2;}
+.carta-mini .cnum{
+  position:absolute;top:14px;right:18px;
+  font-family:'Dancing Script',cursive;font-size:40px;
+  color:rgba(120,70,10,.12);z-index:1;
+}
+
+/* CIERRE S5 */
+.cierre-sello{
+  width:80px;height:80px;margin:0 auto 20px;
+  background:radial-gradient(circle at 38% 32%,#e04040,#8a0000);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:38px;
+  box-shadow:0 8px 28px rgba(160,0,0,.5);
+  border:4px solid #6a0000;
+  animation:latido 1.4s ease-in-out infinite;
+}
+@keyframes latido{0%,100%{transform:scale(1)}14%{transform:scale(1.14)}28%{transform:scale(1)}42%{transform:scale(1.08)}}
+.postdata{
+  background:rgba(200,155,70,.07);
+  border-left:3px solid #c89b46;
+  border-radius:0 12px 12px 0;
+  padding:16px 20px;margin-top:20px;
+  font-size:14px;color:#c89b46;
+  font-style:italic;line-height:1.9;
+  position:relative;z-index:2;
+}
+
+/* CONFETTI */
+.cf{position:fixed;top:-10px;border-radius:2px;animation:caer linear forwards;pointer-events:none;z-index:999;}
+@keyframes caer{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+.footer{text-align:center;font-size:12px;color:rgba(200,155,70,.35);margin-top:14px;font-style:italic;letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<div class="dots" id="dots"></div>
+
+<!-- ===== S0 PORTADA ===== -->
+<div class="scr active" id="s0" style="text-align:center;">
+  <p style="font-size:11px;letter-spacing:4px;color:#c89b46;text-transform:uppercase;font-style:italic;margin-bottom:22px;">20 de marzo · Día de la Carta</p>
+
+  <div class="env-wrap">
+    <div class="env" id="env" onclick="abrirSobre()">
+      <div class="env-body">
+        <div class="env-flap"></div>
+        <div class="env-l"></div>
+        <div class="env-r"></div>
+        <div class="env-bot"></div>
+        <div class="env-carta" id="env-carta">Para Anyela 💌</div>
+        <div class="env-seal">💌</div>
+      </div>
+    </div>
+    <p class="env-hint" id="env-hint">toca el sobre para abrirlo ✦</p>
+  </div>
+
+  <div class="typing"><span id="typed"></span><span class="cur"></span></div>
+
+  <p style="font-size:14px;color:rgba(200,155,70,.6);font-style:italic;margin-bottom:6px;">para ti, Anyela, con todo lo que siento.</p>
+
+  <button class="btn" onclick="go(1)">Abrir la carta 💌</button>
+</div>
+
+<!-- ===== S1 LA CARTA ===== -->
+<div class="scr" id="s1">
+  <div class="papel">
+    <div class="ink-spot" style="width:18px;height:12px;top:30px;right:60px;transform:rotate(20deg);"></div>
+    <div class="ink-spot" style="width:10px;height:7px;bottom:50px;left:80px;transform:rotate(-15deg);"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:2;">
+      <div>
+        <div class="papel-title">Para Anyela</div>
+        <div class="papel-date">20 de marzo · Día de la Carta</div>
+      </div>
+      <div class="sello-cera">💌</div>
+    </div>
+    <div class="papel-saludo">Mi niña,</div>
+    <div class="papel-body">
+      Hoy es el Día de la Carta y pensé que no había nada más bonito que escribirte a ti. De verdad.<br><br>
+      Sé que hay cosas que a veces me cuestan decirte de frente. No porque no las sienta, sino porque cuando te tengo cerca se me olvida todo lo que tenía preparado. Así que aquí va, escrito en papel — o lo más parecido que pude —, para que no se pierda.<br><br>
+      Me alegra mucho tenerte. Que existas, que seas como eres, que me hayas elegido a mí también. Eso no es poca cosa y lo pienso más de lo que me imaginas.
+    </div>
+    <div class="divline">✦ · ✦</div>
+    <div class="papel-body">
+      Hay personas que pasan por tu vida y no dejan huella, y luego estás tú — que cambiaste algo sin siquiera proponértelo. Eso es lo que me gusta de ti. Lo auténtica que eres.<br><br>
+      Hoy quiero que guardes esto. Y que cuando lo releas, sepas que cada palabra la escribí pensando en ti, con toda la ternura que tengo. 🥺
+    </div>
+    <div class="papel-firma">Con todo mi amor,<br> 💜</div>
+  </div>
+  <div style="text-align:center;"><button class="btn" onclick="go(2)">Siguiente →</button></div>
+</div>
+
+<!-- ===== S2 SOBRES OCULTOS ===== -->
+<div class="scr" id="s2">
+  <div class="papel">
+    <div class="papel-saludo" style="margin-bottom:4px;">✦ Más cartas para ti</div>
+    <p style="font-size:13px;color:#8b5a20;position:relative;z-index:2;margin-bottom:20px;">Te escondí mensajes en estos sobres. Toca cada uno para abrirlo.</p>
+    <div class="cartas-grid" id="cartas-grid"></div>
+    <div id="msgs-abiertos" style="margin-top:16px;display:none;">
+      <p style="font-size:11px;letter-spacing:2px;color:#8b5a20;text-transform:uppercase;margin-bottom:10px;position:relative;z-index:2;">mensajes encontrados</p>
+      <div id="msgs-lista"></div>
+    </div>
+  </div>
+  <div style="text-align:center;"><button class="btn" onclick="go(3)">Siguiente →</button></div>
+</div>
+
+<!-- ===== S3 ELEGIR SELLO ===== -->
+<div class="scr" id="s3">
+  <div class="papel">
+    <div class="papel-saludo" style="margin-bottom:6px;">✦ Sella tu carta</div>
+    <p style="font-size:13px;color:#8b5a20;position:relative;z-index:2;margin-bottom:20px;">Las cartas de antes venían selladas con lacre. Esta carta necesita el tuyo. ¿Cuál te representa?</p>
+    <div class="sellos" id="sellos">
+      <div class="sello" style="--sc:#cc4444" onclick="elegirSello(this,'❤️','Amor','Este sello lo ponen quienes sienten de verdad. Muy tuyo.')">❤ amor</div>
+      <div class="sello" style="--sc:#c89b46" onclick="elegirSello(this,'✨','Especial','El dorado es para personas que brillan. Exactamente tú.')">✦ especial</div>
+      <div class="sello" style="--sc:#5a9a6a" onclick="elegirSello(this,'🌸','Ternura','Ternura pura. Así eres tú conmigo siempre.')">✿ ternura</div>
+      <div class="sello" style="--sc:#7a5abf" onclick="elegirSello(this,'💜','Corazón','Este sello lo firmo yo también, desde acá.')">♡ corazón</div>
+      <div class="sello" style="--sc:#c86030" onclick="elegirSello(this,'🌙','Ternura nocturna','Para los mensajes que solo existen de noche.')">☽ noche</div>
+      <div class="sello" style="--sc:#c89b46" onclick="elegirSello(this,'⭐','Única','Porque no hay nadie como tú. En serio.')">★ única</div>
+    </div>
+    <div class="sello-chosen" id="sello-chosen">
+      <span class="sello-icon" id="si"></span>
+      <p class="sello-name" id="sn"></p>
+      <p class="sello-msg" id="sm"></p>
+    </div>
+  </div>
+  <div style="text-align:center;">
+    <button class="btn" id="btn3" onclick="go(4)" style="display:none;">Ver más →</button>
+  </div>
+</div>
+
+<!-- ===== S4 GALERÍA DE CARTAS ===== -->
+<div class="scr" id="s4">
+  <p style="font-family:'Playfair Display',serif;font-size:14px;color:#c89b46;font-style:italic;letter-spacing:2px;text-align:center;margin-bottom:20px;">✦ Cartas que nunca te envié ✦</p>
+  <div class="galeria">
+
+    <div class="carta-mini">
+      <div class="cnum">01</div>
+      <div class="ctitle">La carta del primer día</div>
+      <div class="ctext">Si te hubiera escrito el día que te conocí, probablemente no habría encontrado las palabras. Solo hubiera puesto tu nombre y tres puntos suspensivos.</div>
+      <div class="ctag">✦ nunca enviada</div>
+    </div>
+
+    <div class="carta-mini">
+      <div class="cnum">02</div>
+      <div class="ctitle">La carta de los días normales</div>
+      <div class="ctext">Hay días en los que no pasa nada especial, pero igual pienso en ti. Esa carta la escribo mentalmente casi todos los días y empieza igual: "hoy también pensé en ti".</div>
+      <div class="ctag">✦ escrita en la cabeza</div>
+    </div>
+
+    <div class="carta-mini">
+      <div class="cnum">03</div>
+      <div class="ctitle">La carta de lo que admiro</div>
+      <div class="ctext">Admiro cómo te esfuerzas. Cómo te importan las cosas. Cómo eres auténtica sin disculparte por eso. Eso no es tan común, y me parece increíble.</div>
+      <div class="ctag">✦ con toda la verdad</div>
+    </div>
+
+    <div class="carta-mini">
+      <div class="cnum">04</div>
+      <div class="ctitle">La carta de hoy</div>
+      <div class="ctext">Esta sí te la envío. Hoy, el Día de la Carta, porque me pareciste la razón perfecta para escribir algo que valga la pena. Y lo vales. 💜</div>
+      <div class="ctag">✦ entregada con amor</div>
+    </div>
+
+  </div>
+  <div style="text-align:center;margin-top:16px;"><button class="btn" onclick="go(5)">El cierre 🌙</button></div>
+</div>
+
+<!-- ===== S5 CIERRE ===== -->
+<div class="scr" id="s5">
+  <div class="papel">
+    <div class="cierre-sello">💌</div>
+    <div class="papel-title" style="text-align:center;font-size:30px;margin-bottom:4px;">Y así termina esta carta</div>
+    <div class="papel-date" style="text-align:center;">...aunque lo que siento no termina aquí</div>
+    <div class="divline">✦ · ✦</div>
+    <div class="papel-body">
+      Gracias por leer hasta el final. Espero que esta carta haya dicho algo de lo mucho que siento cuando pienso en ti.<br><br>
+      Hoy y siempre, me alegra muchísimo que estés en mi vida. Eso no cambia. ✦
+    </div>
+    <div class="papel-firma">Con amor de verdad,<br> 💜</div>
+    <div class="postdata">
+      P.D. — Si algún día necesitas releer algo bonito, aquí estará esta carta esperándote. Porque tú te mereces palabras bonitas todos los días, no solo hoy. 🥺
+    </div>
+  </div>
+  <div style="text-align:center;"><button class="btn" onclick="boom()">🎉 ¡Celebremos!</button></div>
+</div>
+
+<p class="footer">con amor · 20 de marzo 💌</p>
+</div>
+
+<script>
+/* partículas */
+['✦','·','❧','✿','♡','✉','✦','·'].forEach((p,i)=>{
+  const el=document.createElement('div');el.className='pt';el.textContent=p;
+  el.style.cssText=`left:${8+i*12}%;bottom:${8+Math.random()*18}%;--d:${4.5+i*1.1}s;--dl:${i*.7}s;--r:${(Math.random()-.5)*50}deg;`;
+  document.body.appendChild(el);
+});
+
+/* dots */
+const TOTAL=6;
+const dotsEl=document.getElementById('dots');
+for(let i=0;i<TOTAL;i++){
+  const d=document.createElement('div');d.className='dot'+(i===0?' on':'');
+  d.onclick=()=>go(i);dotsEl.appendChild(d);
+}
+function updDots(n){document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===n));}
+
+function go(n){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  updDots(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2&&!gridBuilt)buildGrid();
+}
+
+/* typing */
+const lines=["hoy es el Día de la Carta, Mi niña... 💌","quería escribirte algo de verdad ✦","porque tú te lo mereces, siempre 🥺"];
+let li=0,ci=0,del=false;
+const typed=document.getElementById('typed');
+function type(){
+  const l=lines[li];
+  if(!del){typed.textContent=l.slice(0,++ci);if(ci===l.length){del=true;setTimeout(type,2300);return;}}
+  else{typed.textContent=l.slice(0,--ci);if(ci===0){del=false;li=(li+1)%lines.length;}}
+  setTimeout(type,del?40:82);
+}
+type();
+
+/* sobre */
+function abrirSobre(){
+  const e=document.getElementById('env');
+  e.classList.toggle('abierto');
+  document.getElementById('env-hint').textContent=e.classList.contains('abierto')?'¡abierto! 💌':'toca el sobre para abrirlo ✦';
+}
+
+/* sobres ocultos */
+const mensajes=[
+  {i:'💌',t:'Te pienso más de lo que crees.'},
+  {i:'🌙',t:'Me gusta cuando me hablas de tu día.'},
+  {i:'✨',t:'Tu sonrisa es lo mejor de mi semana.'},
+  {i:'🫶',t:'Estoy muy orgulloso de ti.'},
+  {i:'🌸',t:'Me alegra que existas en mi vida.'},
+  {i:'💜',t:'Te quiero más de lo que sé decirte.'},
+  {i:'⭐',t:'Eres la persona más especial que conozco.'},
+  {i:'✦',t:'Hoy y siempre, gracias por ser tú.'},
+];
+let gridBuilt=false,abiertos=new Set();
+function buildGrid(){
+  gridBuilt=true;
+  const g=document.getElementById('cartas-grid');
+  mensajes.forEach((m,i)=>{
+    const d=document.createElement('div');d.className='mini-sobre';
+    d.innerHTML=`
+      <svg viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="70" rx="5" fill="url(#eg${i})"/>
+        <defs><linearGradient id="eg${i}" x1="0" y1="0" x2="100" y2="70" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#f2d478"/><stop offset="100%" stop-color="#c08010"/>
+        </linearGradient></defs>
+        <polygon points="0,0 100,0 50,42" fill="#d4a020" opacity=".9"/>
+        <polygon points="0,0 0,70 38,38" fill="#c09010" opacity=".8"/>
+        <polygon points="100,0 100,70 62,38" fill="#c09010" opacity=".8"/>
+        <polygon points="0,70 100,70 62,38 38,38" fill="#b87e08" opacity=".9"/>
+        <circle cx="50" cy="38" r="11" fill="#cc2222" opacity=".9"/>
+        <text x="50" y="43" text-anchor="middle" font-size="11" fill="#fff">💌</text>
+      </svg>
+      <div class="msg-reveal"><div class="micon">${m.i}</div><div class="mtxt">${m.t}</div></div>
+    `;
+    d.onclick=()=>{
+      if(abiertos.has(i))return;
+      abiertos.add(i);d.classList.add('open');
+      const box=document.getElementById('msgs-abiertos');
+      const lista=document.getElementById('msgs-lista');
+      box.style.display='block';
+      const el=document.createElement('div');
+      el.style.cssText='padding:8px 0;border-bottom:1px solid rgba(200,155,70,.1);font-size:14px;color:#c89b46;font-style:italic;animation:faderise .4s ease both;';
+      el.textContent=m.i+' '+m.t;
+      lista.appendChild(el);
+    };
+    g.appendChild(d);
+  });
+}
+
+/* sellos */
+function elegirSello(el,icon,name,msg){
+  document.getElementById('si').textContent=icon;
+  document.getElementById('sn').textContent='Sello '+name+' ✦';
+  document.getElementById('sm').textContent=msg;
+  document.getElementById('sello-chosen').classList.add('show');
+  document.getElementById('btn3').style.display='inline-block';
+  document.querySelectorAll('.sello').forEach(s=>s.style.opacity='.4');
+  el.style.opacity='1';el.style.transform='rotate(-3deg) scale(1.08)';
+}
+
+/* confetti */
+function boom(){
+  const cols=['#c89b46','#f2d478','#fef9ec','#cc4444','#5a9a6a','#d4a830','#fff','#f0d080'];
+  for(let i=0;i<90;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');c.className='cf';
+      const sz=Math.random()*10+5;
+      c.style.cssText=`left:${Math.random()*100}vw;width:${sz}px;height:${sz*(Math.random()*2+.5)}px;background:${cols[Math.floor(Math.random()*cols.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${(Math.random()*2+2.5).toFixed(1)}s;animation-delay:${(Math.random()*.8).toFixed(1)}s;opacity:${Math.random()*.7+.3};`;
+      document.body.appendChild(c);setTimeout(()=>c.remove(),5000);
+    },i*38);
+  }
+}
+</script>
+</body>
+</html>
